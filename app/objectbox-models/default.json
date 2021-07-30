@@ -10,20 +10,27 @@
       "properties": [
         {
           "id": "1:1272585530203609966",
-          "name": "id"
+          "name": "id",
+          "type": 6,
+          "flags": 1
         },
         {
           "id": "2:1512547127665075673",
-          "name": "userName"
+          "name": "userName",
+          "type": 9
         },
         {
           "id": "3:7513283841821407652",
+          "name": "userId",
           "indexId": "1:3560879887834479193",
-          "name": "userId"
+          "type": 9,
+          "flags": 40
         },
         {
           "id": "4:1627480694268146517",
-          "name": "isSent"
+          "name": "isSent",
+          "type": 1,
+          "flags": 4
         }
       ],
       "relations": []
@@ -35,40 +42,56 @@
       "properties": [
         {
           "id": "1:4953202157404983630",
-          "name": "id"
+          "name": "id",
+          "type": 6,
+          "flags": 1
         },
         {
           "id": "2:889900207757599628",
-          "name": "message"
+          "name": "message",
+          "type": 9
         },
         {
           "id": "3:7091799810660205467",
-          "name": "incoming"
+          "name": "incoming",
+          "type": 1,
+          "flags": 4
         },
         {
           "id": "4:954817488138609430",
-          "name": "friendsId"
+          "name": "friendsId",
+          "type": 9
         },
         {
           "id": "5:7086687523450057127",
-          "name": "messageStatus"
+          "name": "messageStatus",
+          "type": 5,
+          "flags": 4
         },
         {
           "id": "6:8303584601472770029",
-          "name": "receiveTime"
+          "name": "receiveTime",
+          "type": 6,
+          "flags": 4
         },
         {
           "id": "7:1669023491628040823",
+          "name": "messageId",
           "indexId": "2:1415758983718959614",
-          "name": "messageId"
+          "type": 9,
+          "flags": 40
         },
         {
           "id": "8:2497394709237928169",
-          "name": "messageType"
+          "name": "messageType",
+          "type": 5,
+          "flags": 4
         },
         {
           "id": "9:9122584203246390452",
-          "name": "progress"
+          "name": "progress",
+          "type": 5,
+          "flags": 4
         }
       ],
       "relations": []
@@ -78,8 +101,8 @@
   "lastIndexId": "2:1415758983718959614",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
-  "modelVersion": 4,
-  "modelVersionParserMinimum": 4,
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
   "retiredPropertyUids": [],
