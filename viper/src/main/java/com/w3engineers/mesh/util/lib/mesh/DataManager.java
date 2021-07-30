@@ -189,17 +189,13 @@ public class DataManager {
 
                     if (CommonUtil.isEmulator()) {
                         isAlreadyToPlayStore = true;
+                        HandlerUtil.postForeground(DialogUtil::dismissLoadingProgress);
                     }
 
                     HandlerUtil.postBackground(this, 5000);
 
                     if (!isAlreadyToPlayStore) {
-                        HandlerUtil.postForeground(new Runnable() {
-                            @Override
-                            public void run() {
-                                DialogUtil.dismissLoadingProgress();
-                            }
-                        });
+                        HandlerUtil.postForeground(DialogUtil::dismissLoadingProgress);
                         showConfirmationPopUp();
                     }
                     isAlreadyToPlayStore = true;
@@ -866,11 +862,14 @@ public class DataManager {
 
     public boolean isNetworkOnline() {
         try {
-            return mTmCommunicator.isNetworkOnline();
+            if (mTmCommunicator != null) {
+                return mTmCommunicator.isNetworkOnline();
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
             return false;
         }
+        return false;
     }
 
     public Network getNetwork() {
