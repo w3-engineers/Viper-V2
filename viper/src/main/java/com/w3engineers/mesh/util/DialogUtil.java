@@ -4,10 +4,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.Html;
+import android.text.TextUtils;
 
 import androidx.appcompat.app.AlertDialog;
 
 import com.w3engineers.mesh.R;
+import com.w3engineers.mesh.application.data.local.db.SharedPref;
 
 
 public class DialogUtil {
@@ -15,11 +17,11 @@ public class DialogUtil {
     static AlertDialog alertDialog;
 
     public static AlertDialog showConfirmationDialog(Context context,
-                                              String title,
-                                              String message,
-                                              String negativeText,
-                                              String positiveText,
-                                              final DialogButtonListener listener) {
+                                                     String title,
+                                                     String message,
+                                                     String negativeText,
+                                                     String positiveText,
+                                                     final DialogButtonListener listener) {
         try {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context, R.style.DefaultAlertDialogStyle);
             alertDialogBuilder.setTitle(Html.fromHtml("<b>" + title + "</b>"));
@@ -31,7 +33,7 @@ public class DialogUtil {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (listener !=null) {
+                        if (listener != null) {
                             listener.onClickNegative();
                         }
                     }
@@ -42,7 +44,7 @@ public class DialogUtil {
                 alertDialogBuilder.setPositiveButton(positiveText, new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        if (listener !=null){
+                        if (listener != null) {
                             listener.onClickPositive();
                         }
 
@@ -54,7 +56,7 @@ public class DialogUtil {
             alertDialogBuilder.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface dialog) {
-                    if (listener !=null) {
+                    if (listener != null) {
                         listener.onCancel();
                     }
                 }
@@ -78,7 +80,6 @@ public class DialogUtil {
         void onCancel();
 
 
-
         void onClickNegative();
     }
 
@@ -92,7 +93,11 @@ public class DialogUtil {
             }
             progressDialog = new ProgressDialog(context);
             progressDialog.setTitle("Please wait");
-            progressDialog.setMessage("Telemesh is connection with service...");
+            String appName = SharedPref.read(Constant.PreferenceKeys.APP_NAME);
+            if (TextUtils.isEmpty(appName)) {
+                appName = "Client";
+            }
+            progressDialog.setMessage(appName + " is initiating connection with the mesh service app");
             progressDialog.setCancelable(false);
             progressDialog.show();
         } catch (Exception e) {

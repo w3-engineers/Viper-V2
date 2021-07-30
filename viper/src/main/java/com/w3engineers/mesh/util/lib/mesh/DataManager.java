@@ -173,7 +173,9 @@ public class DataManager {
 
                     HandlerUtil.postForeground(() -> {
                         try {
-                            DialogUtil.showLoadingProgress(mContext);
+                            if (!isAlreadyToPlayStore) {
+                                DialogUtil.showLoadingProgress(mContext);
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

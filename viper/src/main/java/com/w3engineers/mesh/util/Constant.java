@@ -31,6 +31,7 @@ public class Constant {
         String APP_VERSION_NAME = "APP_VERSION_NAME";
         String APP_SIZE = "APP_SIZE";
         String IS_SETTINGS_PERMISSION_DONE = "is_settings_permission_done";
+        String APP_NAME = "APP_NAME";
     }
 
     public interface Directory {

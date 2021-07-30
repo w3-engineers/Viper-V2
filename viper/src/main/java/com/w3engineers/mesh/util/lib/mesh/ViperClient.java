@@ -99,6 +99,12 @@ public class ViperClient {
                 appSize = getFileSize(size);
             }
 
+            String appName = (String) context.getPackageManager().getApplicationLabel(
+                    context.getPackageManager().getApplicationInfo(context.getPackageName(),
+                            PackageManager.GET_META_DATA));
+
+            SharedPref.write(Constant.PreferenceKeys.APP_NAME, appName);
+
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -163,7 +169,7 @@ public class ViperClient {
 
     public void sendFileResumeRequest(String contentId, byte[] metaData) throws RemoteException {
         FileData fileData = new FileData().setContentId(contentId).setMsgMetaData(metaData)
-                            .setAppToken(mContext.getPackageName());
+                .setAppToken(mContext.getPackageName());
 
         DataManager.on().sendFileResumeRequest(fileData);
     }
