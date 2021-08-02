@@ -171,16 +171,18 @@ public class DataManager {
             public void run() {
                 if (mTmCommunicator == null) {
 
-                    HandlerUtil.postForeground(() -> {
-                        try {
-                            if (!isAlreadyToPlayStore) {
-                                DialogUtil.showLoadingProgress(mContext);
+                    if (!CommonUtil.isEmulator()) {
+                        HandlerUtil.postForeground(() -> {
+                            try {
+                                if (!isAlreadyToPlayStore) {
+                                    DialogUtil.showLoadingProgress(mContext);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
 
-                    });
+                        });
+                    }
 
                     boolean isSuccess = initServiceConnection();
 
@@ -191,16 +193,18 @@ public class DataManager {
 
                     if (CommonUtil.isEmulator()) {
                         isAlreadyToPlayStore = true;
-                        HandlerUtil.postForeground(DialogUtil::dismissLoadingProgress);
+                        //HandlerUtil.postForeground(DialogUtil::dismissLoadingProgress);
                     }
 
-                    HandlerUtil.postBackground(this, 5000);
+                    if (!CommonUtil.isEmulator()) {
+                        HandlerUtil.postBackground(this, 5000);
 
-                    if (!isAlreadyToPlayStore) {
-                        HandlerUtil.postForeground(DialogUtil::dismissLoadingProgress);
-                        showConfirmationPopUp();
+                        if (!isAlreadyToPlayStore) {
+                            HandlerUtil.postForeground(DialogUtil::dismissLoadingProgress);
+                            showConfirmationPopUp();
+                        }
+                        isAlreadyToPlayStore = true;
                     }
-                    isAlreadyToPlayStore = true;
                 }
             }
         });
