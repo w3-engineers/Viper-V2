@@ -1057,6 +1057,16 @@ public class DataManager {
         }
     }
 
+    public void openRoutesActivity() {
+        try {
+            if (mTmCommunicator != null) {
+                mTmCommunicator.openRouteUI();
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void openDataPlan() {
         try {
             if (mTmCommunicator != null) {

@@ -34,6 +34,7 @@ interface ITmCommunicator {
    void openWalletCreationUI(in String appToken);
    void openDataplanUI(in String appToken);
    void openWalletUI(in String appToken, in byte[] pictureData);
+   void openRouteUI();
    void openSellerInterfaceUI(in String appToken);
    void openMeshLogUI();
 
