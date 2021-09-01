@@ -1228,7 +1228,9 @@ public class DataManager {
 
             for (String permission : permissions) {
                 if (!TextUtils.isEmpty(permission)) {
-                    if (permission.equals(Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    if (permission.equals(Manifest.permission.ACCESS_COARSE_LOCATION)
+                            || permission.equals(Manifest.permission.ACCESS_FINE_LOCATION)
+                            || permission.equals(Manifest.permission.ACCESS_BACKGROUND_LOCATION)) {
                         event = "Location";
                     } else if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         event = "Storage";
