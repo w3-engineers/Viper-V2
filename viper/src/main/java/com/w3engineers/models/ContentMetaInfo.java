@@ -11,6 +11,7 @@ public class ContentMetaInfo implements Parcelable {
     private String metaInfo;
     private int messageType;
     private byte[] thumbData;
+    private boolean isGroupContent;
 
     public ContentMetaInfo() {
 
@@ -68,6 +69,15 @@ public class ContentMetaInfo implements Parcelable {
 
     public ContentMetaInfo setThumbData(byte[] thumbData) {
         this.thumbData = thumbData;
+        return this;
+    }
+
+    public boolean isGroupContent() {
+        return isGroupContent;
+    }
+
+    public ContentMetaInfo setGroupContent(boolean groupContent) {
+        isGroupContent = groupContent;
         return this;
     }
 
