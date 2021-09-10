@@ -852,7 +852,9 @@ public class DataManager {
 
     public void openWalletCreateUI() {
         try {
-            mTmCommunicator.openWalletCreationUI(appTokenName);
+            if (mTmCommunicator != null) {
+                mTmCommunicator.openWalletCreationUI(appTokenName);
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -860,7 +862,9 @@ public class DataManager {
 
     public void openMeshLogUI() {
         try {
-            mTmCommunicator.openMeshLogUI();
+            if (mTmCommunicator != null) {
+                mTmCommunicator.openMeshLogUI();
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
