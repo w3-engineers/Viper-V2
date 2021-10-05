@@ -1264,9 +1264,9 @@ public class DataManager {
 
         boolean finalIsPermission = isPermission;
         okay.setOnClickListener(v -> {
-            if (isPermissionNeeded(DEVICE_NAME)) {
+            /*if (isPermissionNeeded(DEVICE_NAME)) {
                 showPermissionPopupForXiaomi(activity);
-            } else if (finalIsPermission) {
+            } else*/ if (finalIsPermission) {
                 DataManager.on().allowMissingPermission(permissions);
                 alertDialog.dismiss();
             } else {
