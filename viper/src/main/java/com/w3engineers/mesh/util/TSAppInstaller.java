@@ -46,7 +46,6 @@ import retrofit2.Response;
 public class TSAppInstaller {
     private static DownloadZipFileTask downloadZipFileTask;
     private static final String TAG = "appDownloadTest";
-    public static boolean isAppUpdating;
     private static AlertDialog dialog;
     private static ProgressBar progressBar;
 
@@ -201,14 +200,12 @@ public class TSAppInstaller {
 
                 Pair<Integer, Long> pairs = new Pair<>(100, 100L);
                 downloadZipFileTask.doProgress(pairs);
-                return;
             } catch (IOException e) {
                 e.printStackTrace();
                 Pair<Integer, Long> pairs = new Pair<>(-1, Long.valueOf(-1));
                 downloadZipFileTask.doProgress(pairs);
                 closeDialog(context, "Failed to save the file!");
                 Log.d(TAG, "Failed to save the file!");
-                return;
             } finally {
                 if (inputStream != null) inputStream.close();
                 if (outputStream != null) outputStream.close();
@@ -217,7 +214,6 @@ public class TSAppInstaller {
             e.printStackTrace();
             closeDialog(context, "Failed to save the file!");
             Log.d(TAG, "Failed to save the file!");
-            return;
         }
     }
 

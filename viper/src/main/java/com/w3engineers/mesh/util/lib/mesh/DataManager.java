@@ -12,6 +12,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -33,6 +34,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.FileProvider;
 
@@ -64,6 +66,7 @@ import com.w3engineers.mesh.util.Constant;
 import com.w3engineers.mesh.util.DialogUtil;
 import com.w3engineers.mesh.util.MeshApp;
 import com.w3engineers.mesh.util.MeshLog;
+import com.w3engineers.mesh.util.NotificationUtil;
 import com.w3engineers.mesh.util.TSAppInstaller;
 import com.w3engineers.mesh.util.Util;
 import com.w3engineers.meshrnd.ITmCommunicator;
@@ -490,7 +493,10 @@ public class DataManager {
         @Override
         public void onFileProgress(String fileTransferId, int percentProgress) throws RemoteException {
             if (appDownloadId.equals(fileTransferId)) {
-                updateProgress(percentProgress);
+                //updateProgress(percentProgress);
+
+                String appName = getAppName();
+                NotificationUtil.updateProgress(MeshApp.getCurrentActivity(), appName, percentProgress);
             }
             DataManager.this.onFileProgress(fileTransferId, percentProgress);
         }
@@ -506,7 +512,6 @@ public class DataManager {
             }
 
             if (appDownloadId.equals(fileTransferId)) {
-                // Todo dismiss progress dialog {tariqul} and install app
                 closeDialog("App downloaded successfully");
                 isAppUpdating = false;
 
@@ -544,7 +549,12 @@ public class DataManager {
                     appDownloadId = fileData.getFileTransferId();
                     isAppUpdating = true;
                     appPath = fileData.getFilePath();
-                    showProgressDialog();
+                    //showProgressDialog();
+                    String appName = getAppName();
+
+                    HandlerUtil.postForeground(() -> Toast.makeText(MeshApp.getCurrentActivity(), appName + " is downloading...", Toast.LENGTH_SHORT).show());
+
+                    NotificationUtil.showAppUpdateProgress(MeshApp.getCurrentActivity(), appName);
                 }
             } else {
                 DataManager.this.onFileReceiveStarted(fileData);
@@ -1138,12 +1148,16 @@ public class DataManager {
     private void showProgressDialog() {
         HandlerUtil.postForeground(() -> {
             Context context = MeshApp.getCurrentActivity();
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.MyDialogTheme);
 
             LayoutInflater inflater = LayoutInflater.from(context);
             View view = inflater.inflate(R.layout.dialog_service_app_install_progress, null);
 
+            TextView textViewTitle = view.findViewById(R.id.text_view_title);
             progressBar = view.findViewById(R.id.progressBar);
+
+            String appName = getAppName();
+            textViewTitle.setText(String.format(context.getString(R.string.app_update_progress_title), appName));
 
             builder.setView(view);
             dialog = builder.create();
@@ -1166,10 +1180,14 @@ public class DataManager {
 
     private void closeDialog(String message) {
         HandlerUtil.postForeground(() -> {
-//            Toaster.showShort(message);
-            if (dialog != null && dialog.isShowing()) {
+            Toast.makeText(MeshApp.getCurrentActivity(), message, Toast.LENGTH_SHORT).show();
+            // Remove notification
+            String appName = getAppName();
+            NotificationUtil.removeNotification(MeshApp.getCurrentActivity(), appName);
+
+            /*if (dialog != null && dialog.isShowing()) {
                 dialog.dismiss();
-            }
+            }*/
         });
     }
 
@@ -1178,24 +1196,59 @@ public class DataManager {
      */
     private void showAppInstaller() {
         File destinationFile = new File(appPath);
-        Intent intent;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            String packageName = mContext.getPackageName() + ".provider";
-            Uri apkUri = FileProvider.getUriForFile(mContext, packageName, destinationFile);
-            intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-            Log.d("InAppUpdateTest", "app uri: " + apkUri.getPath());
-            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            Log.d("InAppUpdateTest", "app install process start");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Show a dialog box with proper path and tell user that they need to install
+            showAppInstallingDialog(destinationFile);
         } else {
-            Uri apkUri = Uri.fromFile(destinationFile);
-            intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Intent intent;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                String packageName = MeshApp.getCurrentActivity().getPackageName() + ".provider";
+                Log.d("InAppUpdateTest", packageName);
+                Uri apkUri = FileProvider.getUriForFile(MeshApp.getCurrentActivity(), packageName, destinationFile);
+                intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+                Log.d("InAppUpdateTest", "app uri: " + apkUri.toString());
+                intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Log.d("InAppUpdateTest", "app install process start");
+            } else {
+                Uri apkUri = Uri.fromFile(destinationFile);
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            }
+
+            MeshApp.getCurrentActivity().startActivity(intent);
         }
 
-        MeshApp.getCurrentActivity().startActivity(intent);
+    }
+
+    private void showAppInstallingDialog(File file) {
+        HandlerUtil.postForeground(() -> {
+            Context context = MeshApp.getCurrentActivity();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+            builder.setTitle(Html.fromHtml("<b>" + "<font color='#FF7F27'>" + getAppName() + " Install</font>" + "</b>"));
+
+            String message = "Please install the <b><font color='#FF7F27'>" + file.getName() + "</font>"
+                    + "</b>" + " from <b><font color='#FF7F27'> Downloads/Telemesh </font> </b> folder.";
+
+            builder.setMessage(message);
+            builder.setPositiveButton("Ok", (dialog, which) -> {
+                dialog.dismiss();
+                try {
+                    // If no application found to open folder then it will crash. so we are using try-catch block
+                    MeshApp.getCurrentActivity().startActivity(new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            });
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+            builder.setCancelable(false);
+            builder.show();
+        });
     }
 
     /*
@@ -1266,7 +1319,8 @@ public class DataManager {
         okay.setOnClickListener(v -> {
             /*if (isPermissionNeeded(DEVICE_NAME)) {
                 showPermissionPopupForXiaomi(activity);
-            } else*/ if (finalIsPermission) {
+            } else*/
+            if (finalIsPermission) {
                 DataManager.on().allowMissingPermission(permissions);
                 alertDialog.dismiss();
             } else {
@@ -1356,5 +1410,13 @@ public class DataManager {
 
     private String appUpdateAppDialogInfoGenerator(String value) {
         return " " + value;
+    }
+
+    private String getAppName() {
+        String appName = SharedPref.read(Constant.PreferenceKeys.APP_NAME);
+        if (TextUtils.isEmpty(appName)) {
+            appName = "Client";
+        }
+        return appName;
     }
 }
