@@ -76,6 +76,10 @@ public class ViperClient {
         return mViperClient;
     }
 
+    public void startTelemeshService(){
+        DataManager.on().startMeshService();
+    }
+
     private static void setConfig(Context context) {
 
 //        startNetworkMonitor();
@@ -135,7 +139,7 @@ public class ViperClient {
 
         DataManager.on().doBindService(mContext, userInfo, appToken);
 
-        DataManager.on().startMeshService();
+        //DataManager.on().startMeshService();
     }
 
     /*public static void startNetworkMonitor() {

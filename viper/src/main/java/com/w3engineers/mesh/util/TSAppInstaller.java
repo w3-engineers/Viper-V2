@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.core.content.FileProvider;
 
 import com.w3engineers.mesh.R;
+import com.w3engineers.mesh.ui.ProgressListener;
 import com.w3engineers.mesh.util.lib.mesh.HandlerUtil;
 import com.w3engineers.mesh.util.lib.remote.RetrofitInterface;
 import com.w3engineers.mesh.util.lib.remote.RetrofitService;
@@ -47,17 +48,18 @@ public class TSAppInstaller {
     private static DownloadZipFileTask downloadZipFileTask;
     private static final String TAG = "appDownloadTest";
     public static boolean isAppUpdating;
-    private static AlertDialog dialog;
-    private static ProgressBar progressBar;
+    private static ProgressListener progressListener;
+    //private static AlertDialog dialog;
+    //private static ProgressBar progressBar;
 
-    public static void downloadApkFile(Context context, String baseUrl, Network network) {
+    public static void downloadApkFile(Context context, String baseUrl, ProgressListener listener) {
 
-
-        showDialog(MeshApp.getCurrentActivity());
+        progressListener = listener;
+        //showDialog(MeshApp.getCurrentActivity());
 
         Log.d(TAG, "File url: " + baseUrl);
 
-        RetrofitInterface downloadService = RetrofitService.createService(RetrofitInterface.class, baseUrl, network);
+        RetrofitInterface downloadService = RetrofitService.createService(RetrofitInterface.class, baseUrl, null);
         Call<ResponseBody> call = downloadService.downloadFileByUrl("Service.apk");
 
         call.enqueue(new Callback<ResponseBody>() {
@@ -77,7 +79,7 @@ public class TSAppInstaller {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 t.printStackTrace();
-                closeDialog(context, t.getMessage());
+                // closeDialog(context, t.getMessage());
                 Log.e(TAG, t.getMessage());
                 //   isAppUpdating = false;
                 //  InAppUpdate.getInstance(App.getContext()).setAppUpdateProcess(false);
@@ -107,7 +109,7 @@ public class TSAppInstaller {
 
         protected void onProgressUpdate(Pair<Integer, Long>... progress) {
 
-            Log.d("API123", progress[0].second + " ");
+            Log.d("Download_Progress", " progress : "+progress[0].second );
 
             if (progress[0].first == 100) {
                 Toast.makeText(context, "File downloaded successfully", Toast.LENGTH_SHORT).show();
@@ -116,16 +118,17 @@ public class TSAppInstaller {
 
             if (progress[0].second > 0) {
                 int currentProgress = (int) ((double) progress[0].first / (double) progress[0].second * 100);
-                //progressBar.setProgress(currentProgress);
+                progressListener.onDownloadProgress(currentProgress);
+                /*//progressBar.setProgress(currentProgress);
                 if (progressBar != null) {
                     progressBar.setProgress(currentProgress);
-                }
+                }*/
 
                 // txtProgressPercent.setText("Progress " + currentProgress + "%");
             }
 
             if (progress[0].first == -1) {
-                closeDialog(context, "Download failed");
+                //closeDialog(context, "Download failed");
             }
 
         }
@@ -139,8 +142,13 @@ public class TSAppInstaller {
 
             try {
 
-                File destinationFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "TeleService.apk");
+                File destinationFile = null;
 
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ){
+                    destinationFile = new File(context.getExternalFilesDir(""), "TeleService.apk");
+                }else {
+                    destinationFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "TeleService.apk");
+                }
                 Intent intent;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     String packageName = context.getPackageName() + ".provider";
@@ -158,12 +166,12 @@ public class TSAppInstaller {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }
 
-                closeDialog(context, "Download completed");
+                //closeDialog(context, "Download completed");
                 context.startActivity(intent);
 
             } catch (Exception e) {
                 e.printStackTrace();
-                closeDialog(context, e.getMessage());
+                //closeDialog(context, e.getMessage());
             }
 
 
@@ -174,8 +182,13 @@ public class TSAppInstaller {
 
     private static void saveToDisk(Context context, ResponseBody body, String filename) {
         try {
-            File destinationFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
+            File destinationFile = null;
 
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ){
+                destinationFile = new File(context.getExternalFilesDir(""), filename);
+            }else {
+                destinationFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
+            }
             InputStream inputStream = null;
             OutputStream outputStream = null;
 
@@ -192,7 +205,7 @@ public class TSAppInstaller {
                     progress += count;
                     Pair<Integer, Long> pairs = new Pair<>(progress, fileSize);
                     downloadZipFileTask.doProgress(pairs);
-                    Log.d(TAG, "Progress: " + progress + "/" + fileSize + " >>>> " + (float) progress / fileSize);
+                    Log.d("Download_Progress", "Progress: " + progress + "/" + fileSize + " >>>> " + (float) progress / fileSize);
                 }
 
                 outputStream.flush();
@@ -206,7 +219,7 @@ public class TSAppInstaller {
                 e.printStackTrace();
                 Pair<Integer, Long> pairs = new Pair<>(-1, Long.valueOf(-1));
                 downloadZipFileTask.doProgress(pairs);
-                closeDialog(context, "Failed to save the file!");
+                //closeDialog(context, "Failed to save the file!");
                 Log.d(TAG, "Failed to save the file!");
                 return;
             } finally {
@@ -215,12 +228,12 @@ public class TSAppInstaller {
             }
         } catch (IOException e) {
             e.printStackTrace();
-            closeDialog(context, "Failed to save the file!");
+            //closeDialog(context, "Failed to save the file!");
             Log.d(TAG, "Failed to save the file!");
             return;
         }
     }
-
+/*
     private static void showDialog(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -242,5 +255,5 @@ public class TSAppInstaller {
                 dialog.dismiss();
             }
         });
-    }
+    }*/
 }

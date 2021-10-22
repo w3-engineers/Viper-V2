@@ -58,6 +58,7 @@ import com.w3engineers.mesh.application.data.model.TransportInit;
 import com.w3engineers.mesh.application.data.model.UserInfoEvent;
 import com.w3engineers.mesh.application.data.model.WalletCreationEvent;
 import com.w3engineers.mesh.application.data.model.WalletLoaded;
+import com.w3engineers.mesh.ui.ServiceDownloadActivity;
 import com.w3engineers.mesh.util.AppBackupUtil;
 import com.w3engineers.mesh.util.CommonUtil;
 import com.w3engineers.mesh.util.Constant;
@@ -212,7 +213,11 @@ public class DataManager {
 
     private void showConfirmationPopUp() {
 
-        DialogUtil.showConfirmationDialog(MeshApp.getCurrentActivity(),
+        Intent intent = new Intent(mContext, ServiceDownloadActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.startActivity(intent);
+
+        /*DialogUtil.showConfirmationDialog(MeshApp.getCurrentActivity(),
                 mContext.getResources().getString(R.string.install_ts),
                 mContext.getResources().getString(R.string.need_ts),
                 mContext.getString(R.string.cancel),
@@ -234,7 +239,7 @@ public class DataManager {
                     public void onClickNegative() {
                         isAlreadyToPlayStore = false;
                     }
-                });
+                });*/
     }
 
     private void gotoPlayStore() {
@@ -1175,6 +1180,7 @@ public class DataManager {
 
     /**
      * This method is responsible for showing install dialog
+     * /storage/emulated/0/Download/Telemesh/27abf6_2110_055307.apk
      */
     private void showAppInstaller() {
         File destinationFile = new File(appPath);
@@ -1183,7 +1189,7 @@ public class DataManager {
             String packageName = mContext.getPackageName() + ".provider";
             Uri apkUri = FileProvider.getUriForFile(mContext, packageName, destinationFile);
             intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
-            Log.d("InAppUpdateTest", "app uri: " + apkUri.getPath());
+            Log.d("InAppUpdateTest", "app uri: " + apkUri.getPath() + " P: " + appPath);
             intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -1266,7 +1272,8 @@ public class DataManager {
         okay.setOnClickListener(v -> {
             /*if (isPermissionNeeded(DEVICE_NAME)) {
                 showPermissionPopupForXiaomi(activity);
-            } else*/ if (finalIsPermission) {
+            } else*/
+            if (finalIsPermission) {
                 DataManager.on().allowMissingPermission(permissions);
                 alertDialog.dismiss();
             } else {

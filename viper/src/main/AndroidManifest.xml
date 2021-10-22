@@ -4,7 +4,7 @@
     package="com.w3engineers.mesh">
 
     <queries>
-        <package android:name="com.intermeshnetworks.service"/>
+        <package android:name="com.intermeshnetworks.service" />
     </queries>
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -25,6 +25,7 @@
     <application
         android:name=".util.MeshApp"
         tools:replace="android:name">
+        <activity android:name=".ui.ServiceDownloadActivity" />
     </application>
 
 </manifest>
