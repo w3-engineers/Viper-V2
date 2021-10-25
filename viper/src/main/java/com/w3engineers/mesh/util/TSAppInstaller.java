@@ -78,6 +78,7 @@ public class TSAppInstaller {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                progressListener.onErrorOccurred(t.getMessage());
                 t.printStackTrace();
                 // closeDialog(context, t.getMessage());
                 Log.e(TAG, t.getMessage());
@@ -109,7 +110,7 @@ public class TSAppInstaller {
 
         protected void onProgressUpdate(Pair<Integer, Long>... progress) {
 
-            Log.d("Download_Progress", " progress : "+progress[0].second );
+            Log.d("Download_Progress", " progress : " + progress[0].second);
 
             if (progress[0].first == 100) {
                 Toast.makeText(context, "File downloaded successfully", Toast.LENGTH_SHORT).show();
@@ -129,6 +130,7 @@ public class TSAppInstaller {
 
             if (progress[0].first == -1) {
                 //closeDialog(context, "Download failed");
+                progressListener.onErrorOccurred("Download failed");
             }
 
         }
@@ -144,9 +146,9 @@ public class TSAppInstaller {
 
                 File destinationFile = null;
 
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     destinationFile = new File(context.getExternalFilesDir(""), "TeleService.apk");
-                }else {
+                } else {
                     destinationFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "TeleService.apk");
                 }
                 Intent intent;
@@ -172,6 +174,7 @@ public class TSAppInstaller {
             } catch (Exception e) {
                 e.printStackTrace();
                 //closeDialog(context, e.getMessage());
+                progressListener.onErrorOccurred(e.getMessage());
             }
 
 
@@ -184,9 +187,9 @@ public class TSAppInstaller {
         try {
             File destinationFile = null;
 
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R ){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 destinationFile = new File(context.getExternalFilesDir(""), filename);
-            }else {
+            } else {
                 destinationFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
             }
             InputStream inputStream = null;
@@ -220,6 +223,7 @@ public class TSAppInstaller {
                 Pair<Integer, Long> pairs = new Pair<>(-1, Long.valueOf(-1));
                 downloadZipFileTask.doProgress(pairs);
                 //closeDialog(context, "Failed to save the file!");
+                progressListener.onErrorOccurred("Failed to save the file!");
                 Log.d(TAG, "Failed to save the file!");
                 return;
             } finally {
@@ -228,6 +232,7 @@ public class TSAppInstaller {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            progressListener.onErrorOccurred("Failed to save the file!");
             //closeDialog(context, "Failed to save the file!");
             Log.d(TAG, "Failed to save the file!");
             return;

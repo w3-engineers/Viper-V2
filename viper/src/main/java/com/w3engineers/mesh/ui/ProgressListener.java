@@ -5,4 +5,5 @@ package com.w3engineers.mesh.ui;
  */
 public interface ProgressListener {
     void onDownloadProgress(int progress);
+    void onErrorOccurred(String errorText);
 }

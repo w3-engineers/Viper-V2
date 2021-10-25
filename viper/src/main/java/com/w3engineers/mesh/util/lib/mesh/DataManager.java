@@ -171,7 +171,7 @@ public class DataManager {
             @Override
             public void run() {
                 if (mTmCommunicator == null) {
-
+                    Log.e("Attempt_bind", "Bind service thread called");
                     if (!CommonUtil.isEmulator()) {
                         HandlerUtil.postForeground(() -> {
                             try {
@@ -205,6 +205,12 @@ public class DataManager {
                             showConfirmationPopUp();
                         }
                         isAlreadyToPlayStore = true;
+                    }
+                }else{
+                    try {
+                        mTmCommunicator.startTeleMeshService(viperCommunicator, mContext.getPackageName(), userInfo);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
                     }
                 }
             }

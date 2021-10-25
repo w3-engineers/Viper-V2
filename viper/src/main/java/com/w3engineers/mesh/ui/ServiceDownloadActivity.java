@@ -4,11 +4,15 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.w3engineers.mesh.R;
@@ -22,18 +26,32 @@ import com.w3engineers.mesh.util.lib.mesh.HandlerUtil;
  * Created by Azizul Islam on 10/22/21.
  */
 public class ServiceDownloadActivity extends AppCompatActivity implements ProgressListener {
-    private TextView progressView;
     private static final int REQUEST_WRITE_PERMISSION = 786;
+    private ConstraintLayout buttonView;
+    private ProgressBar progressBar;
+    boolean isDownloading = false;
+    private TextView downloadLabelTextView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_download);
-        progressView = findViewById(R.id.tv_progress);
+        buttonView = findViewById(R.id.btn_view);
+        progressBar = findViewById(R.id.pb_download);
+        downloadLabelTextView = findViewById(R.id.label_text);
     }
 
     public void downloadServiceApp(View view) {
         checkPermissionAndTriggerDownload();
+    }
+
+    public void onDownloadLater(View view) {
+        finish();
+        System.exit(0);
+    }
+
+    public void onClickGetServiceFromFriend(View view) {
+        Toast.makeText(this, "Need to set a valid text message", Toast.LENGTH_LONG).show();
     }
 
     private void checkPermissionAndTriggerDownload() {
@@ -69,9 +87,43 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
         }
     }
 
+    private void showHideView(boolean isNeedToShowProgressView) {
+        if (isNeedToShowProgressView) {
+            if (progressBar.getVisibility() != View.VISIBLE) {
+                buttonView.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                downloadLabelTextView.setText(getText(R.string.label_downloading));
+            }
+        } else {
+            buttonView.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
+            downloadLabelTextView.setText(getText(R.string.label_download_requires));
+        }
+    }
+
 
     @Override
     public void onDownloadProgress(int progress) {
-        progressView.setText("Download progress :" + progress);
+        showHideView(true);
+        isDownloading = true;
+        progressBar.setProgress(progress);
+        if (progress >= 100) {
+            finish();
+            isDownloading = false;
+        }
+    }
+
+    @Override
+    public void onErrorOccurred(String errorText) {
+        Log.e("ErrorOccurred", errorText);
+        showHideView(false);
+        isDownloading = false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!isDownloading) {
+            super.onBackPressed();
+        }
     }
 }

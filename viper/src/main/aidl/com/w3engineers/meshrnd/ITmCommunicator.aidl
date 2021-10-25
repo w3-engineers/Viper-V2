@@ -49,4 +49,6 @@ interface ITmCommunicator {
 
    boolean isNetworkOnline();
    Network getNetwork();
+
+   void launchActivity(int activityType);
 }

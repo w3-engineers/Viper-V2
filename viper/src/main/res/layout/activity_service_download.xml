@@ -1,60 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    android:padding="30dp">
+    android:padding="50dp">
+
+
+    <ImageView
+        android:id="@+id/iv_top"
+        android:layout_width="140dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="50dp"
+        android:src="@mipmap/ic_mobile_downalod"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
     <TextView
         android:id="@+id/label_text"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="50dp"
-        android:text="Describe Why Telemesh service is important"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center"
+        android:text="@string/label_download_requires"
         android:textColor="@color/white"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tv_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@+id/label_text" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.75" />
-
-    <Button
-        android:id="@+id/btn_download"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginBottom="20dp"
-        android:onClick="downloadServiceApp"
-        android:text="Download Service app"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guidline" />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <Button
-        android:layout_width="match_parent"
+    <ProgressBar
+        android:id="@+id/pb_download"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="15dp"
+        android:max="100"
+        android:progress="0"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:progressDrawable="@drawable/progress_bar_shape"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"/>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/btn_view"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:text="Get Service app from nearby friend"
-        app:layout_constraintEnd_toEndOf="@+id/btn_download"
-        app:layout_constraintStart_toStartOf="@+id/btn_download"
-        app:layout_constraintTop_toBottomOf="@+id/btn_download" />
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/label_text">
+
+        <Button
+            android:id="@+id/btn_download"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="30dp"
+            android:background="@color/link_color"
+            android:onClick="downloadServiceApp"
+            android:text="Download now"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn_get_from_friend"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/btn_rectangle_shape"
+            android:text="GET it from a friend"
+            android:onClick="onClickGetServiceFromFriend"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="@+id/btn_download"
+            app:layout_constraintStart_toStartOf="@+id/btn_download"
+            app:layout_constraintTop_toBottomOf="@+id/btn_download" />
+
+        <Button
+            android:id="@+id/btn_download_later"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/btn_rectangle_shape"
+            android:text="Download later"
+            android:textColor="@color/white"
+            android:onClick="onDownloadLater"
+            app:layout_constraintEnd_toEndOf="@+id/btn_download"
+            app:layout_constraintStart_toStartOf="@+id/btn_download"
+            app:layout_constraintTop_toBottomOf="@+id/btn_get_from_friend" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
