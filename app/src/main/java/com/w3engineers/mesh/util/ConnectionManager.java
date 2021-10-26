@@ -102,7 +102,7 @@ public class ConnectionManager {
 
                 String meshControlConfigData = new Gson().toJson(meshControlConfig);*/
 
-            viperClient = ViperClient.on(mContext, SharedPref.read(Constant.KEY_USER_NAME));
+            viperClient = ViperClient.on(mContext, SharedPref.read(Constant.KEY_USER_NAME), "");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -534,8 +534,8 @@ public class ConnectionManager {
     public String sendFileMessage(String receiverId, String filePath) {
         try {
             FileData fileData = new FileData()
-                               .setReceiverID(receiverId).setFilePath(filePath)
-                               .setMsgMetaData("".getBytes()).setAppToken(mContext.getPackageName());
+                    .setReceiverID(receiverId).setFilePath(filePath)
+                    .setMsgMetaData("".getBytes()).setAppToken(mContext.getPackageName());
 
             return viperClient.sendFileMessage(fileData);
         } catch (RemoteException e) {
