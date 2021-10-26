@@ -51,4 +51,5 @@ interface ITmCommunicator {
    Network getNetwork();
 
    void launchActivity(int activityType);
+   Location getLocation();
 }
