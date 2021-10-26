@@ -10,11 +10,12 @@ public class UserInfoEvent extends Event implements Parcelable {
     private String address;
     private int avatar;
     private String userName;
+    private String lastName;
     private long regTime;
-//    private int configVersion;
+    //    private int configVersion;
     private boolean isSync;
 
-    public UserInfoEvent(){
+    public UserInfoEvent() {
 
     }
 
@@ -67,6 +68,14 @@ public class UserInfoEvent extends Event implements Parcelable {
         isSync = sync;
     }
 
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
     protected UserInfoEvent(Parcel in) {
         address = in.readString();
         avatar = in.readInt();
@@ -74,6 +83,7 @@ public class UserInfoEvent extends Event implements Parcelable {
         regTime = in.readLong();
 //        configVersion = in.readInt();
         isSync = in.readByte() != 0;
+        lastName = in.readString();
     }
 
     public static final Creator<UserInfoEvent> CREATOR = new Creator<UserInfoEvent>() {
@@ -101,5 +111,6 @@ public class UserInfoEvent extends Event implements Parcelable {
         dest.writeLong(regTime);
 //        dest.writeInt(configVersion);
         dest.writeByte((byte) (isSync ? 1 : 0));
+        dest.writeString(lastName);
     }
 }

@@ -21,6 +21,7 @@ public class ViperClient {
 
     private static Context mContext;
     private static String usersName;
+    private static String lastName;
     private static int avatar;
     private static String appToken;
 
@@ -33,35 +34,36 @@ public class ViperClient {
         }
     }
 
-    private ViperClient(Context context, String appToken, String userName, int avatar) {
+    private ViperClient(Context context, String appToken, String userName, String lastName, int avatar) {
         this.mContext = context;
         this.appToken = appToken;
         this.usersName = userName;
+        this.lastName = lastName;
         this.avatar = avatar;
     }
 
-    public static ViperClient on(Context context, String userName) {
+    public static ViperClient on(Context context, String userName, String lastName) {
         if (context == null) {
             throw new NullPointerException("Context is null");
         }
-        return on(context, context.getPackageName(), userName, avatar);
+        return on(context, context.getPackageName(), userName, lastName, avatar);
     }
 
-    public static ViperClient on(Context context, String userName, int avatar) {
+    public static ViperClient on(Context context, String userName, String lastName, int avatar) {
         if (context == null) {
             throw new NullPointerException("Context is null");
         }
-        return on(context, context.getPackageName(), userName, avatar);
+        return on(context, context.getPackageName(), userName, lastName, avatar);
     }
 
-    public static ViperClient on(Context context, String appToken, String userName) {
+    public static ViperClient on(Context context, String appToken, String userName, String lastName) {
         if (context == null) {
             throw new NullPointerException("Context is null");
         }
-        return on(context, appToken, userName, avatar);
+        return on(context, appToken, userName, lastName, avatar);
     }
 
-    public static ViperClient on(Context context, String appToken, String userName, int avatar) {
+    public static ViperClient on(Context context, String appToken, String userName, String lastName, int avatar) {
         if (context == null) {
             throw new NullPointerException("Context is null");
         }
@@ -69,7 +71,7 @@ public class ViperClient {
         if (mViperClient == null) {
             synchronized (ViperClient.class) {
                 if (mViperClient == null)
-                    mViperClient = new ViperClient(context, appToken, userName, avatar);
+                    mViperClient = new ViperClient(context, appToken, userName, lastName, avatar);
             }
         }
         setConfig(context);
@@ -130,6 +132,7 @@ public class ViperClient {
         userInfo.setAvatar(avatar);
         userInfo.setAddress(userAddress);
         userInfo.setUserName(usersName);
+        userInfo.setLastName(lastName);
         userInfo.setAppToken(appToken);
 
         // For App update app info
@@ -220,7 +223,7 @@ public class ViperClient {
         return DataManager.on().getLinkTypeById(nodeID);
     }
 
-    public void updateMyInfo(String usersName) {
+    public void updateMyInfo(String usersName, String lastName) {
         try {
             UserInfo userInfo = new UserInfo();
 
@@ -229,6 +232,7 @@ public class ViperClient {
             userInfo.setAddress(myAddress);
             userInfo.setAvatar(avatar);
             userInfo.setUserName(usersName);
+            userInfo.setLastName(lastName);
             userInfo.setAppToken(DataManager.on().getAppTokenName());
 
             DataManager.on().saveUserInfo(userInfo);
@@ -237,7 +241,7 @@ public class ViperClient {
         }
     }
 
-    public void updateMyInfo(String usersName, int avatar) {
+    public void updateMyInfo(String usersName, String lastName, int avatar) {
         try {
             UserInfo userInfo = new UserInfo();
 
@@ -246,6 +250,7 @@ public class ViperClient {
             userInfo.setAddress(myAddress);
             userInfo.setAvatar(avatar);
             userInfo.setUserName(usersName);
+            userInfo.setLastName(lastName);
             userInfo.setAppToken(DataManager.on().getAppTokenName());
 
             DataManager.on().saveUserInfo(userInfo);
@@ -254,13 +259,14 @@ public class ViperClient {
         }
     }
 
-    public void updateUserInfo(String userAddress, String usersName, int avatar) {
+    public void updateUserInfo(String userAddress, String usersName, String lastName, int avatar) {
         try {
             UserInfo userInfo = new UserInfo();
 
             userInfo.setAddress(userAddress);
             userInfo.setAvatar(avatar);
             userInfo.setUserName(usersName);
+            userInfo.setLastName(lastName);
             userInfo.setAppToken(DataManager.on().getAppTokenName());
 
             DataManager.on().saveOtherUserInfo(userInfo);
@@ -270,12 +276,13 @@ public class ViperClient {
         }
     }
 
-    public void updateUserInfo(String userAddress, String usersName) {
+    public void updateUserInfo(String userAddress, String usersName, String lastName) {
         try {
             UserInfo userInfo = new UserInfo();
 
             userInfo.setAddress(userAddress);
             userInfo.setUserName(usersName);
+            userInfo.setLastName(lastName);
             userInfo.setAppToken(DataManager.on().getAppTokenName());
 
             DataManager.on().saveOtherUserInfo(userInfo);

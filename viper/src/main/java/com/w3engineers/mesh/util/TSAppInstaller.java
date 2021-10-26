@@ -217,7 +217,6 @@ public class TSAppInstaller {
 
                 Pair<Integer, Long> pairs = new Pair<>(100, 100L);
                 downloadZipFileTask.doProgress(pairs);
-                return;
             } catch (IOException e) {
                 e.printStackTrace();
                 Pair<Integer, Long> pairs = new Pair<>(-1, Long.valueOf(-1));
@@ -225,7 +224,6 @@ public class TSAppInstaller {
                 //closeDialog(context, "Failed to save the file!");
                 progressListener.onErrorOccurred("Failed to save the file!");
                 Log.d(TAG, "Failed to save the file!");
-                return;
             } finally {
                 if (inputStream != null) inputStream.close();
                 if (outputStream != null) outputStream.close();
@@ -235,7 +233,6 @@ public class TSAppInstaller {
             progressListener.onErrorOccurred("Failed to save the file!");
             //closeDialog(context, "Failed to save the file!");
             Log.d(TAG, "Failed to save the file!");
-            return;
         }
     }
 /*
