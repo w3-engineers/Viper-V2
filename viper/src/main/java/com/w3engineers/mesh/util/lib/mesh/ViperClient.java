@@ -81,6 +81,10 @@ public class ViperClient {
     public void startTelemeshService(){
         DataManager.on().startMeshService();
     }
+    public void launchActivity(int activityType){
+        DataManager.on().launchActivity(activityType);
+    }
+
 
     private static void setConfig(Context context) {
 

@@ -145,6 +145,16 @@ public class DataManager {
         this.userInfo = userInfo;
         this.appTokenName = appTokenName;
     }
+    public void launchActivity(int serviceType)  {
+        if(mTmCommunicator != null){
+            try {
+                mTmCommunicator.launchActivity(serviceType);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     public void startMeshService() {
         checkAndBindService();
