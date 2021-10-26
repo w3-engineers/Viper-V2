@@ -918,6 +918,7 @@ public class DataManager {
             userInfoEvent.setAddress(userInfo.getAddress());
             userInfoEvent.setAvatar(userInfo.getAvatar());
             userInfoEvent.setUserName(userInfo.getUserName());
+            userInfoEvent.setLastName(userInfo.getLastName());
             userInfoEvent.setRegTime(userInfo.getRegTime());
 
             AppDataObserver.on().sendObserverData(userInfoEvent);
@@ -1234,7 +1235,7 @@ public class DataManager {
             String message = "Please install the <b><font color='#FF7F27'>" + file.getName() + "</font>"
                     + "</b>" + " from <b><font color='#FF7F27'> Downloads/Telemesh </font> </b> folder.";
 
-            builder.setMessage(message);
+            builder.setMessage(Html.fromHtml(message));
             builder.setPositiveButton("Ok", (dialog, which) -> {
                 dialog.dismiss();
                 try {

@@ -7,6 +7,7 @@ public class UserInfo implements Parcelable {
     private String address;
     private int avatar;
     private String userName;
+    private String lastName;
     private long regTime;
     private String publicKey;
     private String appToken;
@@ -116,6 +117,14 @@ public class UserInfo implements Parcelable {
         this.lang = lang;
     }
 
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
     public UserInfo() {
 
     }
@@ -133,6 +142,7 @@ public class UserInfo implements Parcelable {
         registrationKey = in.readString();
         lat = in.readDouble();
         lang = in.readDouble();
+        lastName = in.readString();
     }
 
     public static final Creator<UserInfo> CREATOR = new Creator<UserInfo>() {
@@ -166,5 +176,6 @@ public class UserInfo implements Parcelable {
         dest.writeString(registrationKey);
         dest.writeDouble(lat);
         dest.writeDouble(lang);
+        dest.writeString(lastName);
     }
 }
