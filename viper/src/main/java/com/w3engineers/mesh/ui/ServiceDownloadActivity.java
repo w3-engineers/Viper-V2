@@ -122,8 +122,8 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
 
     @Override
     public void onBackPressed() {
-        if (!isDownloading) {
+        /*if (!isDownloading) {
             super.onBackPressed();
-        }
+        }*/
     }
 }
