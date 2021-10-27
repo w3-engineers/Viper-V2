@@ -60,6 +60,7 @@ import com.w3engineers.mesh.application.data.model.TransportInit;
 import com.w3engineers.mesh.application.data.model.UserInfoEvent;
 import com.w3engineers.mesh.application.data.model.WalletCreationEvent;
 import com.w3engineers.mesh.application.data.model.WalletLoaded;
+import com.w3engineers.mesh.application.data.model.WalletPrepared;
 import com.w3engineers.mesh.ui.ServiceDownloadActivity;
 import com.w3engineers.mesh.util.AppBackupUtil;
 import com.w3engineers.mesh.util.CommonUtil;
@@ -145,10 +146,11 @@ public class DataManager {
         this.userInfo = userInfo;
         this.appTokenName = appTokenName;
     }
-    public void launchActivity(int serviceType)  {
-        if(mTmCommunicator != null){
+
+    public void launchActivity(int serviceType) {
+        if (mTmCommunicator != null) {
             try {
-                mTmCommunicator.launchActivity(serviceType);
+                mTmCommunicator.launchActivity(serviceType, mContext.getPackageName());
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -189,7 +191,7 @@ public class DataManager {
                         HandlerUtil.postForeground(() -> {
                             try {
                                 if (!isAlreadyToPlayStore) {
-                                    DialogUtil.showLoadingProgress(mContext);
+                                    DialogUtil.showLoadingProgress(MeshApp.getCurrentActivity());
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -219,7 +221,7 @@ public class DataManager {
                         }
                         isAlreadyToPlayStore = true;
                     }
-                }else{
+                } else {
                     try {
                         mTmCommunicator.startTeleMeshService(viperCommunicator, mContext.getPackageName(), userInfo);
                     } catch (RemoteException e) {
@@ -610,6 +612,13 @@ public class DataManager {
                     .setRange(broadcastData.getRange())
                     .setExpiryTime(broadcastData.getExpiryTime());
             AppDataObserver.on().sendObserverData(broadcastEvent);
+        }
+
+        @Override
+        public void onWallerPrepared() throws RemoteException {
+            WalletPrepared walletPrepared = new WalletPrepared();
+            walletPrepared.success = true;
+            AppDataObserver.on().sendObserverData(walletPrepared);
         }
     };
 

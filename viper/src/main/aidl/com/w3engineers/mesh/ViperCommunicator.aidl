@@ -37,4 +37,5 @@ interface ViperCommunicator {
     void onPendingFileReceive(in PendingContentInfo pendingContentInfo);
 
     void receiveBroadcast(in BroadcastData broadcastData);
+    void onWallerPrepared();
 }
