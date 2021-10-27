@@ -628,7 +628,7 @@ public class DataManager {
         }
 
         @Override
-        public void onWallerPrepared() throws RemoteException {
+        public void onWalletPrepared() throws RemoteException {
             WalletPrepared walletPrepared = new WalletPrepared();
             walletPrepared.success = true;
             AppDataObserver.on().sendObserverData(walletPrepared);

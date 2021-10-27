@@ -52,5 +52,5 @@ interface ITmCommunicator {
 
    void launchActivity(int activityType, String token);
    Location getLocation();
-   void onWallerPrepared(String token);
+   void onWalletPrepared(String token);
 }
