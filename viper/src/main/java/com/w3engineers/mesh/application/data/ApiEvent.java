@@ -25,6 +25,7 @@ import com.w3engineers.mesh.application.data.model.TransportInit;
 import com.w3engineers.mesh.application.data.model.UserInfoEvent;
 import com.w3engineers.mesh.application.data.model.WalletCreationEvent;
 import com.w3engineers.mesh.application.data.model.WalletLoaded;
+import com.w3engineers.mesh.application.data.model.WalletPrepared;
 
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -39,6 +40,7 @@ public interface ApiEvent {
 
     Class TRANSPORT_INIT = TransportInit.class;
     Class WALLET_LOADED = WalletLoaded.class;
+    Class WALLET_PREPARED = WalletPrepared.class;
 
     Class USER_INFO = UserInfoEvent.class;
     Class SERVICE_UPDATE = ServiceUpdate.class;

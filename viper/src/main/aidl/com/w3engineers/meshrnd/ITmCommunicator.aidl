@@ -50,7 +50,7 @@ interface ITmCommunicator {
    boolean isNetworkOnline();
    Network getNetwork();
 
-   void launchActivity(int activityType);
+   void launchActivity(int activityType, String token);
    Location getLocation();
    void onWallerPrepared(String token);
 }
