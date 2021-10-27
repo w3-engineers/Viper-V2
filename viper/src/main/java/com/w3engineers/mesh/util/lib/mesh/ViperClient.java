@@ -3,6 +3,7 @@ package com.w3engineers.mesh.util.lib.mesh;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Network;
 import android.os.RemoteException;
 
@@ -85,6 +86,9 @@ public class ViperClient {
         DataManager.on().launchActivity(activityType);
     }
 
+    public Location getLocationFromService(){
+        return DataManager.on().getLocation();
+    }
 
     private static void setConfig(Context context) {
 

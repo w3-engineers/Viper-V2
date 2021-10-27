@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.location.Location;
 import android.net.Network;
 import android.net.Uri;
 import android.os.Build;
@@ -156,6 +157,18 @@ public class DataManager {
             }
         }
     }
+
+    public Location getLocation(){
+        if(mTmCommunicator != null){
+            try {
+                return mTmCommunicator.getLocation();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
 
 
     public void startMeshService() {
