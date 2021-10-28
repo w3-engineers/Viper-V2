@@ -158,6 +158,19 @@ public class DataManager {
         }
     }
 
+    public Location getLocation(){
+        if(mTmCommunicator != null){
+            try {
+                return mTmCommunicator.getLocation();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
+
+
 
     public void startMeshService() {
         checkAndBindService();
