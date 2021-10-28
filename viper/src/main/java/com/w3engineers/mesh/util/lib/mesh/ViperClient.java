@@ -79,14 +79,15 @@ public class ViperClient {
         return mViperClient;
     }
 
-    public void startTelemeshService(){
+    public void startTelemeshService() {
         DataManager.on().startMeshService();
     }
-    public void launchActivity(int activityType){
+
+    public void launchActivity(int activityType) {
         DataManager.on().launchActivity(activityType);
     }
 
-    public Location getLocationFromService(){
+    public Location getLocationFromService() {
         return DataManager.on().getLocation();
     }
 
@@ -302,6 +303,10 @@ public class ViperClient {
 
     public void stopMesh() {
         DataManager.on().stopMesh();
+    }
+
+    public void startMesh() {
+        DataManager.on().startMesh();
     }
 
     public void restartMesh() {

@@ -115,6 +115,7 @@ public class DataManager {
     private static AlertDialog dialog;
     private androidx.appcompat.app.AlertDialog appUpdateDialog;
     private AlertDialog newAppUpdateDialog;
+    private boolean isMeshStarted;
 
     /**
      * It has first part is file id and second part is file path
@@ -159,8 +160,8 @@ public class DataManager {
         }
     }
 
-    public Location getLocation(){
-        if(mTmCommunicator != null){
+    public Location getLocation() {
+        if (mTmCommunicator != null) {
             try {
                 return mTmCommunicator.getLocation();
             } catch (RemoteException e) {
@@ -170,7 +171,6 @@ public class DataManager {
 
         return null;
     }
-
 
 
     public void startMeshService() {
@@ -411,6 +411,7 @@ public class DataManager {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             mTmCommunicator = null;
+            isMeshStarted = false;
             Log.v("service_status", "onServiceDisconnected");
         }
     };
@@ -630,9 +631,17 @@ public class DataManager {
         }
 
         @Override
-        public void onWalletPrepared() throws RemoteException {
+        public void onWalletPrepared(boolean isOldAccount) throws RemoteException {
             WalletPrepared walletPrepared = new WalletPrepared();
             walletPrepared.success = true;
+            walletPrepared.isOldAccount = isOldAccount;
+
+            if (!isOldAccount) {
+                isMeshStarted = true;
+            } else {
+                DialogUtil.dismissLoadingProgress();
+            }
+
             AppDataObserver.on().sendObserverData(walletPrepared);
         }
 
@@ -1014,6 +1023,19 @@ public class DataManager {
         MeshLog.v("stop mesh is called");
         try {
             mTmCommunicator.stopMesh();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void startMesh() {
+        MeshLog.v("start mesh is called");
+        try {
+
+            if (!isMeshStarted) {
+                isMeshStarted = true;
+                mTmCommunicator.startMesh(mContext.getPackageName());
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         }
