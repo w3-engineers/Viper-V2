@@ -53,4 +53,5 @@ interface ITmCommunicator {
    void launchActivity(int activityType, String token);
    Location getLocation();
    void onWalletPrepared(String token);
+   void onWalletBackUpDone(in String token,in boolean isSuccess);
 }

@@ -23,6 +23,7 @@ import com.w3engineers.mesh.application.data.model.ServiceDestroyed;
 import com.w3engineers.mesh.application.data.model.ServiceUpdate;
 import com.w3engineers.mesh.application.data.model.TransportInit;
 import com.w3engineers.mesh.application.data.model.UserInfoEvent;
+import com.w3engineers.mesh.application.data.model.WalletBackupEvent;
 import com.w3engineers.mesh.application.data.model.WalletCreationEvent;
 import com.w3engineers.mesh.application.data.model.WalletLoaded;
 import com.w3engineers.mesh.application.data.model.WalletPrepared;
@@ -41,6 +42,7 @@ public interface ApiEvent {
     Class TRANSPORT_INIT = TransportInit.class;
     Class WALLET_LOADED = WalletLoaded.class;
     Class WALLET_PREPARED = WalletPrepared.class;
+    Class WALLET_BACKUP = WalletBackupEvent.class;
 
     Class USER_INFO = UserInfoEvent.class;
     Class SERVICE_UPDATE = ServiceUpdate.class;

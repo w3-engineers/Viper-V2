@@ -19,7 +19,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.location.Location;
 import android.net.Network;
 import android.net.Uri;
 import android.os.Build;
@@ -59,6 +58,7 @@ import com.w3engineers.mesh.application.data.model.ServiceDestroyed;
 import com.w3engineers.mesh.application.data.model.ServiceUpdate;
 import com.w3engineers.mesh.application.data.model.TransportInit;
 import com.w3engineers.mesh.application.data.model.UserInfoEvent;
+import com.w3engineers.mesh.application.data.model.WalletBackupEvent;
 import com.w3engineers.mesh.application.data.model.WalletCreationEvent;
 import com.w3engineers.mesh.application.data.model.WalletLoaded;
 import com.w3engineers.mesh.application.data.model.WalletPrepared;
@@ -157,18 +157,6 @@ public class DataManager {
             }
         }
     }
-
-    public Location getLocation(){
-        if(mTmCommunicator != null){
-            try {
-                return mTmCommunicator.getLocation();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
 
 
     public void startMeshService() {
@@ -630,6 +618,13 @@ public class DataManager {
         @Override
         public void onWalletPrepared() throws RemoteException {
             WalletPrepared walletPrepared = new WalletPrepared();
+            walletPrepared.success = true;
+            AppDataObserver.on().sendObserverData(walletPrepared);
+        }
+
+        @Override
+        public void onWalletBackUpDone(boolean isSuccess) throws RemoteException {
+            WalletBackupEvent walletPrepared = new WalletBackupEvent();
             walletPrepared.success = true;
             AppDataObserver.on().sendObserverData(walletPrepared);
         }

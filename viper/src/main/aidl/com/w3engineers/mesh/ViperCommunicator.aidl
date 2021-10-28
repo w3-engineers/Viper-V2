@@ -38,4 +38,5 @@ interface ViperCommunicator {
 
     void receiveBroadcast(in BroadcastData broadcastData);
     void onWalletPrepared();
+    void onWalletBackUpDone(boolean isSuccess);
 }
