@@ -150,7 +150,7 @@ public class ViperClient {
 
         DataManager.on().doBindService(mContext, userInfo, appToken);
 
-        //DataManager.on().startMeshService();
+        DataManager.on().startMeshService();
     }
 
     /*public static void startNetworkMonitor() {
