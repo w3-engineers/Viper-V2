@@ -91,6 +91,10 @@ public class ViperClient {
         return DataManager.on().getLocation();
     }
 
+    public boolean isWalletBackupDone() {
+        return DataManager.on().isWalletBackupDone();
+    }
+
     private static void setConfig(Context context) {
 
 //        startNetworkMonitor();

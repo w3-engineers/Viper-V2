@@ -172,6 +172,18 @@ public class DataManager {
         return null;
     }
 
+    public boolean isWalletBackupDone() {
+        if (mTmCommunicator != null) {
+            try {
+                return mTmCommunicator.isWalletBackupDeon(mContext.getPackageName());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
 
     public void startMeshService() {
         checkAndBindService();
@@ -551,6 +563,7 @@ public class DataManager {
             }
 
             if (appDownloadId.equals(fileTransferId)) {
+                // Todo dismiss progress dialog {tariqul} and install app
                 closeDialog("App downloaded successfully");
                 isAppUpdating = false;
 
