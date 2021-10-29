@@ -551,7 +551,6 @@ public class DataManager {
             }
 
             if (appDownloadId.equals(fileTransferId)) {
-                // Todo dismiss progress dialog {tariqul} and install app
                 closeDialog("App downloaded successfully");
                 isAppUpdating = false;
 
