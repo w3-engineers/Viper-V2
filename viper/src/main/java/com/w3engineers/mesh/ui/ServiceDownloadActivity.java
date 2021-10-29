@@ -46,7 +46,7 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
     }
 
     public void onDownloadLater(View view) {
-        finish();
+        finishAffinity();
         System.exit(0);
     }
 
@@ -73,6 +73,8 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
                     if (isConnected) {
                         TSAppInstaller.downloadApkFile(getApplicationContext(),
                                 SharedPref.read(Constant.PreferenceKeys.APP_DOWNLOAD_LINK), this);
+                    }else {
+                        Toast.makeText(this, "Internet connection required....",Toast.LENGTH_LONG).show();
                     }
                 })
 
@@ -122,8 +124,8 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
 
     @Override
     public void onBackPressed() {
-        /*if (!isDownloading) {
-            super.onBackPressed();
-        }*/
+        if(isDownloading){
+            Toast.makeText(this,"Service app is downloading. Please wait...", Toast.LENGTH_LONG).show();
+        }
     }
 }
