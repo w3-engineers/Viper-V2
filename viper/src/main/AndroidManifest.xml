@@ -25,7 +25,8 @@
     <application
         android:name=".util.MeshApp"
         tools:replace="android:name">
-        <activity android:name=".ui.ServiceDownloadActivity" />
+        <activity android:name=".ui.ServiceDownloadActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
