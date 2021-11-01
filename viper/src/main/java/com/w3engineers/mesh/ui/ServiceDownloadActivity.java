@@ -1,11 +1,13 @@
 package com.w3engineers.mesh.ui;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +33,9 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
     private ProgressBar progressBar;
     boolean isDownloading = false;
     private TextView downloadLabelTextView;
+    private ProgressDialog progressDialog;
+    private boolean isServiceAppApkExist;
+    private Button serviceDownloadButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,10 +44,38 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
         buttonView = findViewById(R.id.btn_view);
         progressBar = findViewById(R.id.pb_download);
         downloadLabelTextView = findViewById(R.id.label_text);
+        serviceDownloadButton = findViewById(R.id.btn_download);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        isServiceAppApkExist = TSAppInstaller.isServiceAppApkExist(this);
+
+        if (isServiceAppApkExist) {
+            long serviceAppDownloadTime = TSAppInstaller.getServiceAppDownloadTime();
+            long timeDifference = System.currentTimeMillis() - serviceAppDownloadTime;
+            int second = (int) (timeDifference / 1000);
+            Log.e("Service_app", "Download time difference :" + second);
+
+            if (second >= 3600) {
+                isServiceAppApkExist = false;
+            } else {
+                serviceDownloadButton.setText("Install Service App");
+            }
+
+        }
+
     }
 
     public void downloadServiceApp(View view) {
-        checkPermissionAndTriggerDownload();
+        if (isServiceAppApkExist) {
+            TSAppInstaller.installServiceApp(this);
+            finish();
+        } else {
+            checkPermissionAndTriggerDownload();
+        }
     }
 
     public void onDownloadLater(View view) {
@@ -68,17 +101,34 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
     }
 
     private void downloadServiceAppAfterPermissionCheck() {
+        toggleProgressDialog(true);
         Util.isConnected(isConnected ->
                 HandlerUtil.postForeground(() -> {
                     if (isConnected) {
                         TSAppInstaller.downloadApkFile(getApplicationContext(),
                                 SharedPref.read(Constant.PreferenceKeys.APP_DOWNLOAD_LINK), this);
-                    }else {
-                        Toast.makeText(this, "Internet connection required....",Toast.LENGTH_LONG).show();
+                    } else {
+                        toggleProgressDialog(false);
+                        Toast.makeText(this, "Internet connection required....", Toast.LENGTH_LONG).show();
                     }
                 })
 
         );
+    }
+
+
+    private void toggleProgressDialog(boolean needToShow) {
+        if (needToShow) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setCancelable(false);
+            progressDialog.setMessage("Please wait...");
+            progressDialog.show();
+        } else {
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
+        }
     }
 
     @Override
@@ -106,6 +156,7 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
 
     @Override
     public void onDownloadProgress(int progress) {
+        toggleProgressDialog(false);
         showHideView(true);
         isDownloading = true;
         progressBar.setProgress(progress);
@@ -117,15 +168,23 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
 
     @Override
     public void onErrorOccurred(String errorText) {
-        Log.e("ErrorOccurred", errorText);
-        showHideView(false);
-        isDownloading = false;
+        runOnUiThread(() -> {
+            Toast.makeText(ServiceDownloadActivity.this, errorText, Toast.LENGTH_LONG).show();
+            toggleProgressDialog(false);
+            showHideView(false);
+            isDownloading = false;
+        });
+
     }
 
     @Override
     public void onBackPressed() {
-        if(isDownloading){
-            Toast.makeText(this,"Service app is downloading. Please wait...", Toast.LENGTH_LONG).show();
+
+        if (isDownloading) {
+            Toast.makeText(this, "Service app is downloading. Please wait...", Toast.LENGTH_LONG).show();
         }
+        /*if (!isDownloading) {
+            super.onBackPressed();
+        }*/
     }
 }

@@ -80,6 +80,7 @@ public class ViperClient {
     }
 
     public void startTelemeshService() {
+        DataManager.on().resetServiceAppDownloadState();
         DataManager.on().startMeshService();
     }
 
