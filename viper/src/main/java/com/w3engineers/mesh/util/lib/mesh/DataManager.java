@@ -649,7 +649,7 @@ public class DataManager {
             walletPrepared.isOldAccount = isOldAccount;
 
             if (!isOldAccount) {
-                isMeshStarted = true;
+                //isMeshStarted = true;
             } else {
                 DialogUtil.dismissLoadingProgress();
             }
