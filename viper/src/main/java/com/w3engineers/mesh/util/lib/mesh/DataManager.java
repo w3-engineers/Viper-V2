@@ -184,6 +184,9 @@ public class DataManager {
         return false;
     }
 
+    public void resetServiceAppDownloadState(){
+        isAlreadyToPlayStore = false;
+    }
 
     public void startMeshService() {
         checkAndBindService();

@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.core.content.FileProvider;
 
 import com.w3engineers.mesh.R;
+import com.w3engineers.mesh.application.data.local.db.SharedPref;
 import com.w3engineers.mesh.ui.ProgressListener;
 import com.w3engineers.mesh.util.lib.mesh.HandlerUtil;
 import com.w3engineers.mesh.util.lib.remote.RetrofitInterface;
@@ -89,7 +90,7 @@ public class TSAppInstaller {
     }
 
 
-    private static class DownloadZipFileTask extends AsyncTask<ResponseBody, Pair<Integer, Long>, String> {
+    private static class DownloadZipFileTask extends AsyncTask<ResponseBody, Pair<Integer, Long>, Boolean> {
         private Context context;
 
         public DownloadZipFileTask(Context context) {
@@ -102,10 +103,10 @@ public class TSAppInstaller {
         }
 
         @Override
-        protected String doInBackground(ResponseBody... urls) {
+        protected Boolean doInBackground(ResponseBody... urls) {
             //Copy you logic to calculate progress and call
-            saveToDisk(context, urls[0], "TeleService.apk");
-            return null;
+            boolean isSuccess = saveToDisk(context, urls[0], "TeleService.apk");
+            return isSuccess;
         }
 
         protected void onProgressUpdate(Pair<Integer, Long>... progress) {
@@ -140,17 +141,26 @@ public class TSAppInstaller {
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Boolean isDownloadSuccess) {
 
-            try {
+            if (!isDownloadSuccess) {
+                progressListener.onErrorOccurred("Download failed");
+                File corruptedFile = getDownloadFile(context);
+                corruptedFile.delete();
+                return;
+            }
 
-                File destinationFile = null;
+            installServiceApp(context);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            /*try {
+
+                File destinationFile = getDownloadFile(context);
+
+                *//*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     destinationFile = new File(context.getExternalFilesDir(""), "TeleService.apk");
                 } else {
                     destinationFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "TeleService.apk");
-                }
+                }*//*
                 Intent intent;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     String packageName = context.getPackageName() + ".provider";
@@ -176,22 +186,63 @@ public class TSAppInstaller {
                 //closeDialog(context, e.getMessage());
                 progressListener.onErrorOccurred(e.getMessage());
             }
-
+*/
 
             //    isAppUpdating = false;
             //    InAppUpdate.getInstance(App.getContext()).setAppUpdateProcess(false);
         }
     }
 
-    private static void saveToDisk(Context context, ResponseBody body, String filename) {
-        try {
-            File destinationFile = null;
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+    public static void installServiceApp(Context context) {
+        try {
+
+            File destinationFile = getDownloadFile(context);
+
+                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    destinationFile = new File(context.getExternalFilesDir(""), "TeleService.apk");
+                } else {
+                    destinationFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "TeleService.apk");
+                }*/
+            Intent intent;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                String packageName = context.getPackageName() + ".provider";
+                Uri apkUri = FileProvider.getUriForFile(context, packageName, destinationFile);
+                intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
+                Log.d("InAppUpdateTest", "app uri: " + apkUri.getPath());
+                intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                Log.d("InAppUpdateTest", "app install process start");
+            } else {
+                Uri apkUri = Uri.fromFile(destinationFile);
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            }
+
+            //closeDialog(context, "Download completed");
+            context.startActivity(intent);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            //closeDialog(context, e.getMessage());
+            if (progressListener != null) {
+                progressListener.onErrorOccurred(e.getMessage());
+            }
+        }
+
+    }
+
+    private static boolean saveToDisk(Context context, ResponseBody body, String filename) {
+        try {
+            File destinationFile = getDownloadFile(context);
+
+            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 destinationFile = new File(context.getExternalFilesDir(""), filename);
             } else {
                 destinationFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), filename);
-            }
+            }*/
             InputStream inputStream = null;
             OutputStream outputStream = null;
 
@@ -217,6 +268,8 @@ public class TSAppInstaller {
 
                 Pair<Integer, Long> pairs = new Pair<>(100, 100L);
                 downloadZipFileTask.doProgress(pairs);
+                writeCurrentTime(System.currentTimeMillis());
+                return true;
             } catch (IOException e) {
                 e.printStackTrace();
                 Pair<Integer, Long> pairs = new Pair<>(-1, Long.valueOf(-1));
@@ -234,7 +287,35 @@ public class TSAppInstaller {
             //closeDialog(context, "Failed to save the file!");
             Log.d(TAG, "Failed to save the file!");
         }
+        return false;
     }
+
+    public static File getDownloadFile(Context context) {
+        String fileName = "TeleService.apk";
+        File destinationFile = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            destinationFile = new File(context.getExternalFilesDir(""), fileName);
+        } else {
+            destinationFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName);
+        }
+
+        return destinationFile;
+    }
+
+    public static void writeCurrentTime(long currentTime) {
+        SharedPref.write("download_time", currentTime);
+    }
+
+    public static long getServiceAppDownloadTime() {
+        return SharedPref.readLong("download_time");
+    }
+
+    public static boolean isServiceAppApkExist(Context context) {
+        File file = getDownloadFile(context);
+        return file.exists();
+    }
+
+
 /*
     private static void showDialog(Context context) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
