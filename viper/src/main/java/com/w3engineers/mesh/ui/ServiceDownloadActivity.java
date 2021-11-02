@@ -36,6 +36,7 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
     private ProgressDialog progressDialog;
     private boolean isServiceAppApkExist;
     private Button serviceDownloadButton;
+    private Button installLaterButton;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +46,7 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
         progressBar = findViewById(R.id.pb_download);
         downloadLabelTextView = findViewById(R.id.label_text);
         serviceDownloadButton = findViewById(R.id.btn_download);
+        installLaterButton = findViewById(R.id.btn_download_later);
     }
 
     @Override
@@ -63,6 +65,7 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
                 isServiceAppApkExist = false;
             } else {
                 serviceDownloadButton.setText("Install Service App");
+                installLaterButton.setText("Install later");
             }
 
         }

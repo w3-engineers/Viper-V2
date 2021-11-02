@@ -194,7 +194,7 @@
     <string name="viper_dialog_button_not_now">Not Now</string>
     <string name="viper_dialog_button_update">Offline Update</string>
     <string name="viper_dialog_powered_by">Powered by</string>
-    <string name="label_download_requires">Telemesh requires additional resources downloaded to ensure security amd full functionality.</string>
+    <string name="label_download_requires">Telemesh requires additional resources downloaded to ensure security and full functionality.</string>
     <string name="label_downloading">Downloading service App..</string>
 
 </resources>
