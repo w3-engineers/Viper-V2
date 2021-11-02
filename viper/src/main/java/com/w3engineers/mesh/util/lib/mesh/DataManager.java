@@ -646,10 +646,11 @@ public class DataManager {
         }
 
         @Override
-        public void onWalletPrepared(boolean isOldAccount) throws RemoteException {
+        public void onWalletPrepared(boolean isOldAccount,boolean isImportWallet) throws RemoteException {
             WalletPrepared walletPrepared = new WalletPrepared();
             walletPrepared.success = true;
             walletPrepared.isOldAccount = isOldAccount;
+            walletPrepared.isImportWallet = isImportWallet;
 
             if (!isOldAccount) {
                 //isMeshStarted = true;

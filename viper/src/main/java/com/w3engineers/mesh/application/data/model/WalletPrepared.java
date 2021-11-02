@@ -6,6 +6,7 @@ import android.os.Parcelable;
 public class WalletPrepared extends Event implements Parcelable {
     public boolean success;
     public boolean isOldAccount;
+    public boolean isImportWallet;
 
     public WalletPrepared() {
     }
@@ -13,6 +14,7 @@ public class WalletPrepared extends Event implements Parcelable {
     protected WalletPrepared(Parcel in) {
         success = in.readByte() != 0;
         isOldAccount = in.readByte() != 0;
+        isImportWallet = in.readByte() != 0;
     }
 
     public static final Creator<WalletPrepared> CREATOR = new Creator<WalletPrepared>() {
@@ -36,5 +38,6 @@ public class WalletPrepared extends Event implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeByte((byte) (success ? 1 : 0));
         dest.writeByte((byte) (isOldAccount ? 1 : 0));
+        dest.writeByte((byte) (isImportWallet ? 1 : 0));
     }
 }

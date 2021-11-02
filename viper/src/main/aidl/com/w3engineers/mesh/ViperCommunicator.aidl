@@ -37,6 +37,6 @@ interface ViperCommunicator {
     void onPendingFileReceive(in PendingContentInfo pendingContentInfo);
 
     void receiveBroadcast(in BroadcastData broadcastData);
-    void onWalletPrepared(in boolean isOldAccount);
+    void onWalletPrepared(in boolean isOldAccount,in boolean isImportWallet);
     void onWalletBackUpDone(boolean isSuccess);
 }
