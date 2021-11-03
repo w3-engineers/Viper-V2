@@ -105,7 +105,9 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
 
     private void downloadServiceAppAfterPermissionCheck() {
         toggleProgressDialog(true);
-        Util.isConnected(isConnected ->
+        TSAppInstaller.downloadApkFile(getApplicationContext(),
+                SharedPref.read(Constant.PreferenceKeys.APP_DOWNLOAD_LINK), this);
+        /*Util.isConnected(isConnected ->
                 HandlerUtil.postForeground(() -> {
                     if (isConnected) {
                         TSAppInstaller.downloadApkFile(getApplicationContext(),
@@ -116,7 +118,7 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
                     }
                 })
 
-        );
+        );*/
     }
 
 
@@ -172,7 +174,7 @@ public class ServiceDownloadActivity extends AppCompatActivity implements Progre
     @Override
     public void onErrorOccurred(String errorText) {
         runOnUiThread(() -> {
-            Toast.makeText(ServiceDownloadActivity.this, errorText, Toast.LENGTH_LONG).show();
+            Toast.makeText(ServiceDownloadActivity.this, "Download failed", Toast.LENGTH_LONG).show();
             toggleProgressDialog(false);
             showHideView(false);
             isDownloading = false;
