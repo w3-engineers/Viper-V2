@@ -1,4 +1,4 @@
-[![](https://jitpack.io/v/w3-engineers/viper.svg)](https://jitpack.io/#w3-engineers/viper)
+[![](https://jitpack.io/v/w3-engineers/Viper-V2.svg)](https://jitpack.io/#w3-engineers/Viper-V2)
 
 
 # Important Note
