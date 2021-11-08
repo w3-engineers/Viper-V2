@@ -24,7 +24,7 @@ Add it in your root `build.gradle` at the end of repositories:
 Include the library in app `build.gradle`
 
     dependencies{
-        implementation 'com.github.w3-engineers.viper:paylib:0.0.1-alpha'
+        implementation 'com.github.w3-engineers:Viper-V2:latest-version'
     }
 
 
