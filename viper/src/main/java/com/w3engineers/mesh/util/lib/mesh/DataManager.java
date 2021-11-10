@@ -184,7 +184,7 @@ public class DataManager {
         return false;
     }
 
-    public void resetServiceAppDownloadState(){
+    public void resetServiceAppDownloadState() {
         isAlreadyToPlayStore = false;
     }
 
@@ -646,7 +646,7 @@ public class DataManager {
         }
 
         @Override
-        public void onWalletPrepared(boolean isOldAccount,boolean isImportWallet) throws RemoteException {
+        public void onWalletPrepared(boolean isOldAccount, boolean isImportWallet) throws RemoteException {
             WalletPrepared walletPrepared = new WalletPrepared();
             walletPrepared.success = true;
             walletPrepared.isOldAccount = isOldAccount;
@@ -1511,5 +1511,39 @@ public class DataManager {
             appName = "Client";
         }
         return appName;
+    }
+
+    private void openBlockerDialog(boolean isClientAppNeedUpdate) {
+        Context context = MeshApp.getCurrentActivity();
+        if (context != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(Html.fromHtml("<b>" + "<font color='#FF7F27'>Warning!!</font>" + "</b>"));
+
+            String appName = "TeleService";
+
+            if (isClientAppNeedUpdate) {
+                appName = getAppName();
+            }
+            String message = "Your <b><font color='#FF7F27'>" + appName + "</font>"
+                    + " is not compatible with current features. Please update your </b>" + " from <b><font color='#FF7F27'> " + appName + " </font> </b> folder.";
+
+            builder.setMessage(Html.fromHtml(message));
+            builder.setPositiveButton("Ok", (dialog, which) -> {
+                dialog.dismiss();
+                if (isClientAppNeedUpdate) {
+                    String clientAppPackageName = context.getPackageName();
+                    try {
+                        mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + clientAppPackageName)));
+                    } catch (android.content.ActivityNotFoundException anfe) {
+                        mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + clientAppPackageName)));
+                    }
+                } else {
+                    showConfirmationPopUp();
+                }
+            });
+            builder.setCancelable(false);
+            builder.show();
+        }
+
     }
 }
