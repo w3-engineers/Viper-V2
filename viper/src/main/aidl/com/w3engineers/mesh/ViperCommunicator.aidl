@@ -10,6 +10,9 @@ import com.w3engineers.models.FileData;
 */
 
 interface ViperCommunicator {
+    //TODO Don't add any method above onReceivedApiVersion() method
+    void onReceivedApiVersion(in int aidlApiVersion, in String message);
+
     void onStartTeleMeshService(in boolean isSuccess,in String nodeId, in String mseeage);
     void onTeleServiceStarted(in boolean isSuccess, in String nodeId, in String pubKey, in String message);
 

@@ -118,6 +118,30 @@ public class DataManager {
     private boolean isMeshStarted;
 
     /**
+     * <h1>AIDL Interface is the api to communicate both service app and client app vice versa</h1>
+     * This API version must need to match with the VIPER library AIDL API version.
+     *
+     * Why we need AIDL API version?
+     * -------------------------------
+     * We can't detect any AIDL API related change with the help of android platform. If we make certain types of
+     * changes like api parameter change, api order change, remove etc then communication between client app and
+     * service app will failed. To resolve this issue we will maintain API Version, based on this api version
+     * we will force user to update the respective application.
+     *
+     * When we need to change this value?
+     * ----------------------------------
+     * We must change this value when any change we will make in AIDL interface api like add or remove any
+     * new method or parameter, method order etc.
+     *
+     *   |-------------------------------------------------------------|
+     *   |-------------------------------------------------------------|
+     *   |YOU MUST DISCUSS WITH TEAM MEMBERS BEFORE CHANGING THE VALUE |
+     *   |-------------------------------------------------------------|
+     *   |-------------------------------------------------------------|
+     */
+    private final int AIDL_API_VERSION = 100;
+
+    /**
      * It has first part is file id and second part is file path
      */
     private HashMap<String, String> mAppUpdatePathMap;
@@ -184,7 +208,7 @@ public class DataManager {
         return false;
     }
 
-    public void resetServiceAppDownloadState(){
+    public void resetServiceAppDownloadState() {
         isAlreadyToPlayStore = false;
     }
 
@@ -443,7 +467,7 @@ public class DataManager {
      * Service will keep app data manager alive to receive message </p>
      * </h1>
      */
-    private ViperCommunicator.Stub viperCommunicator = new ViperCommunicator.Stub() {
+    private ViperCommunicator.Stub viperCommunicator = new ViperCommunicator.Stub(){
         @Override
         public void onPeerAdd(String peerId) throws RemoteException {
             DataManager.this.onPeerAdd(peerId);
@@ -482,6 +506,15 @@ public class DataManager {
         @Override
         public void setServiceForeground(boolean isForeGround) throws RemoteException {
 
+        }
+
+        @Override
+        public void onReceivedApiVersion(int aidlApiVersion, String message) throws RemoteException {
+            if(AIDL_API_VERSION > aidlApiVersion){
+                openBlockerDialog(false);
+            }else  if(AIDL_API_VERSION < aidlApiVersion){
+                openBlockerDialog(true);
+            }
         }
 
         @Override
@@ -646,7 +679,7 @@ public class DataManager {
         }
 
         @Override
-        public void onWalletPrepared(boolean isOldAccount,boolean isImportWallet) throws RemoteException {
+        public void onWalletPrepared(boolean isOldAccount, boolean isImportWallet) throws RemoteException {
             WalletPrepared walletPrepared = new WalletPrepared();
             walletPrepared.success = true;
             walletPrepared.isOldAccount = isOldAccount;
@@ -1511,5 +1544,40 @@ public class DataManager {
             appName = "Client";
         }
         return appName;
+    }
+
+    private void openBlockerDialog(boolean isClientAppNeedUpdate) {
+        Context context = MeshApp.getCurrentActivity();
+        if (context != null) {
+            stopMesh();
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(Html.fromHtml("<b>" + "<font color='#FF7F27'>Warning!!</font>" + "</b>"));
+
+            String appName = "TeleService";
+
+            if (isClientAppNeedUpdate) {
+                appName = getAppName();
+            }
+            String message = "Your <b><font color='#FF7F27'>" + appName + "</font>"
+                    + " is not compatible with current features. Please update your </b>" + " from <b><font color='#FF7F27'> " + appName + " </font> </b> folder.";
+
+            builder.setMessage(Html.fromHtml(message));
+            builder.setPositiveButton("Ok", (dialog, which) -> {
+                dialog.dismiss();
+                if (isClientAppNeedUpdate) {
+                    String clientAppPackageName = context.getPackageName();
+                    try {
+                        mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + clientAppPackageName)));
+                    } catch (android.content.ActivityNotFoundException anfe) {
+                        mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + clientAppPackageName)));
+                    }
+                } else {
+                    showConfirmationPopUp();
+                }
+            });
+            builder.setCancelable(false);
+            builder.show();
+        }
+
     }
 }
