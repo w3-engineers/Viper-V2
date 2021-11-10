@@ -120,24 +120,24 @@ public class DataManager {
     /**
      * <h1>AIDL Interface is the api to communicate both service app and client app vice versa</h1>
      * This API version must need to match with the VIPER library AIDL API version.
-     *
+     * <p>
      * Why we need AIDL API version?
      * -------------------------------
      * We can't detect any AIDL API related change with the help of android platform. If we make certain types of
      * changes like api parameter change, api order change, remove etc then communication between client app and
      * service app will failed. To resolve this issue we will maintain API Version, based on this api version
      * we will force user to update the respective application.
-     *
+     * <p>
      * When we need to change this value?
      * ----------------------------------
      * We must change this value when any change we will make in AIDL interface api like add or remove any
      * new method or parameter, method order etc.
-     *
-     *   |-------------------------------------------------------------|
-     *   |-------------------------------------------------------------|
-     *   |YOU MUST DISCUSS WITH TEAM MEMBERS BEFORE CHANGING THE VALUE |
-     *   |-------------------------------------------------------------|
-     *   |-------------------------------------------------------------|
+     * <p>
+     * |-------------------------------------------------------------|
+     * |-------------------------------------------------------------|
+     * |YOU MUST DISCUSS WITH TEAM MEMBERS BEFORE CHANGING THE VALUE |
+     * |-------------------------------------------------------------|
+     * |-------------------------------------------------------------|
      */
     private final int AIDL_API_VERSION = 100;
 
@@ -277,7 +277,7 @@ public class DataManager {
                     }
                 } else {
                     try {
-                        mTmCommunicator.startTeleMeshService(viperCommunicator, mContext.getPackageName(), userInfo);
+                        mTmCommunicator.startTeleMeshService(viperCommunicator, mContext.getPackageName(), userInfo, AIDL_API_VERSION);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -439,7 +439,7 @@ public class DataManager {
                 if (CommonUtil.isEmulator()) {
                     status = true;
                 } else {
-                    mTmCommunicator.startTeleMeshService(viperCommunicator, mContext.getPackageName(), userInfo);
+                    mTmCommunicator.startTeleMeshService(viperCommunicator, mContext.getPackageName(), userInfo, AIDL_API_VERSION);
                 }
 
             } catch (RemoteException e) {
@@ -467,7 +467,7 @@ public class DataManager {
      * Service will keep app data manager alive to receive message </p>
      * </h1>
      */
-    private ViperCommunicator.Stub viperCommunicator = new ViperCommunicator.Stub(){
+    private ViperCommunicator.Stub viperCommunicator = new ViperCommunicator.Stub() {
         @Override
         public void onPeerAdd(String peerId) throws RemoteException {
             DataManager.this.onPeerAdd(peerId);
@@ -510,9 +510,9 @@ public class DataManager {
 
         @Override
         public void onReceivedApiVersion(int aidlApiVersion, String message) throws RemoteException {
-            if(AIDL_API_VERSION > aidlApiVersion){
+            if (AIDL_API_VERSION > aidlApiVersion) {
                 openBlockerDialog(false);
-            }else  if(AIDL_API_VERSION < aidlApiVersion){
+            } else if (AIDL_API_VERSION < aidlApiVersion) {
                 openBlockerDialog(true);
             }
         }
@@ -1549,6 +1549,9 @@ public class DataManager {
     private void openBlockerDialog(boolean isClientAppNeedUpdate) {
         Context context = MeshApp.getCurrentActivity();
         if (context != null) {
+
+            DialogUtil.dismissLoadingProgress();
+
             stopMesh();
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle(Html.fromHtml("<b>" + "<font color='#FF7F27'>Warning!!</font>" + "</b>"));
@@ -1559,7 +1562,7 @@ public class DataManager {
                 appName = getAppName();
             }
             String message = "Your <b><font color='#FF7F27'>" + appName + "</font>"
-                    + " is not compatible with current features. Please update your </b>" + " from <b><font color='#FF7F27'> " + appName + " </font> </b> folder.";
+                    + " is not compatible with current features. Please update your </b>" + " <b><font color='#FF7F27'> " + appName + " </font> </b>.\n After update please re-launch the " + appName + " again.";
 
             builder.setMessage(Html.fromHtml(message));
             builder.setPositiveButton("Ok", (dialog, which) -> {

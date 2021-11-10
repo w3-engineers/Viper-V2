@@ -8,7 +8,7 @@ import android.net.Network;
 
 interface ITmCommunicator {
 
-   void startTeleMeshService(in ViperCommunicator viperCommunicator, in String appToken,in UserInfo userInfo);
+   void startTeleMeshService(in ViperCommunicator viperCommunicator, in String appToken,in UserInfo userInfo,in int apiVersion);
    boolean startMesh(in String appToken);
    void onStartForeground(in boolean isNeeded);
 
