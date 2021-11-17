@@ -170,8 +170,8 @@
     <string name="image">Image</string>
     <string name="app_update_progress_title">"Downloading %s please wait.."</string>
     <string name="got_it">Got It</string>
-    <string name="hardware_interruption">%s turned off. %s would not work properly.</string>
-    <string name="interruption_title">%s Interruption</string>
+    <string name="hardware_interruption">Please enable %s. Otherwise %s would not able to work properly.</string>
+    <string name="interruption_title">Enable %s</string>
     <string name="permission_interruption">%s permission is disabled. %s would not work properly.</string>
 
     <string name="permission_xiomi">To deliver the best experience TeleService needs a few system permissions.\n\nPlease go to your device settings and search for Permissions.

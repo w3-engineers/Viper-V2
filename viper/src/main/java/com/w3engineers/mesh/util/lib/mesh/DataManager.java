@@ -1406,7 +1406,7 @@ public class DataManager {
             if (hardwareEvent == DataPlanConstants.INTERRUPTION_EVENT.USER_DISABLED_BT) {
                 event = "Bluetooth";
             } else if (hardwareEvent == DataPlanConstants.INTERRUPTION_EVENT.USER_DISABLED_WIFI) {
-                event = "Wifi";
+                event = "WiFi";
             } else if (hardwareEvent == DataPlanConstants.INTERRUPTION_EVENT.LOCATION_PROVIDER_OFF) {
                 event = "Location ";
             }
@@ -1414,7 +1414,7 @@ public class DataManager {
             if (!TextUtils.isEmpty(event)) {
                 finalMessage = String.format(mContext.getString(R.string.hardware_interruption),
                         event, activity.getString(R.string.app_name));
-                finalTitle = String.format(mContext.getString(R.string.interruption_title), "Hardware");
+                finalTitle = String.format(mContext.getString(R.string.interruption_title), event);
             }
 
         } else {
